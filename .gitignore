@@ -1,0 +1,11 @@
+node_modules
+web_modules
+.firebase
+.firebaserc
+.glitchdotcom.json
+build
+.node-version
+.env
+/test-results/
+/playwright-report/
+/playwright/.cache/
