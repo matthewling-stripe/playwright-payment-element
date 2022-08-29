@@ -1,7 +1,7 @@
 import { test, expect } from "@playwright/test";
 test("test card payment element", async ({ page }) => {
-  // Go to http://localhost:3000/
-  await page.goto("http://localhost:3000/");
+  // Go to http://localhost:4242/
+  await page.goto("http://localhost:4242/");
 
   const stripeIframe = await page.waitForSelector("iframe");
   const stripeFrame = await stripeIframe.contentFrame();
@@ -18,15 +18,17 @@ test("test card payment element", async ({ page }) => {
   await cardExpInput.fill("04/44");
   await cardCVCInput.fill("444");
 
-  await page.locator("text=Pay with Payment Element").click();
+  const button = await page.locator("button");
+  await button.click();
 
-  await page.waitForNavigation();
+  await page.waitForSelector("span[class='console-message']");
 
-  await expect(page.url()).toContain("http://localhost:3000/?payment_intent");
+  const console = await page.locator('div[id="console"]');
+  await expect(console).toContainText("Payment successful");
 });
 
 test("test redirection payment element", async ({ page }) => {
-  await page.goto("http://localhost:3000/");
+  await page.goto("http://localhost:4242/");
 
   const stripeIframe = await page.waitForSelector("iframe");
   const stripeFrame = await stripeIframe.contentFrame();
@@ -37,10 +39,7 @@ test("test redirection payment element", async ({ page }) => {
   const idealName = await stripeFrame.waitForSelector('input[name="name"]');
   await idealName.fill("Max Powers");
 
-  await Promise.all([
-    page.waitForNavigation(),
-    page.locator("text=Pay with Payment Element").click(),
-  ]);
+  await Promise.all([page.waitForNavigation(), page.locator("button").click()]);
 
   await expect(page.url()).toContain(
     "https://stripe.com/payment_methods/test_payment"
@@ -50,8 +49,5 @@ test("test redirection payment element", async ({ page }) => {
 
   await Promise.all([page.waitForNavigation(), authButton.click()]);
 
-  await expect(page.url()).toContain("http://localhost:3000/?payment_intent");
-
-  // const console = page.locator('div[id="console"]');
-  // await expect(console).toContainText("Payment succeeded");
+  await expect(page.url()).toContain("http://localhost:4242/success.html");
 });
