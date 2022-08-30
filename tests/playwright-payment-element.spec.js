@@ -26,28 +26,3 @@ test("test card payment element", async ({ page }) => {
   const console = await page.locator('div[id="console"]');
   await expect(console).toContainText("Payment successful");
 });
-
-test("test redirection payment element", async ({ page }) => {
-  await page.goto("http://localhost:4242/");
-
-  const stripeIframe = await page.waitForSelector("iframe");
-  const stripeFrame = await stripeIframe.contentFrame();
-
-  const idealTab = await stripeFrame.waitForSelector('button[id="ideal-tab"]');
-  await idealTab.click();
-
-  const idealName = await stripeFrame.waitForSelector('input[name="name"]');
-  await idealName.fill("Max Powers");
-
-  await Promise.all([page.waitForNavigation(), page.locator("button").click()]);
-
-  await expect(page.url()).toContain(
-    "https://stripe.com/payment_methods/test_payment"
-  );
-
-  const authButton = await page.locator('a[name="success"]');
-
-  await Promise.all([page.waitForNavigation(), authButton.click()]);
-
-  await expect(page.url()).toContain("http://localhost:4242/success.html");
-});
