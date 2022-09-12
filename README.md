@@ -4,6 +4,8 @@
 
 ### Create a .env file
 
+In the root of the project:
+
 ```
 cp .env.sample .env
 ```
